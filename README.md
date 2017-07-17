@@ -16,7 +16,7 @@ let package = Package(
 
 ## usage
 
-This package exposes a public function (`OpenWhiskAction` ) that should be called with a function reference (`([String: Any]) -> [String: Any])`) as a named parameter (`main`). The callback will be executed with the invocation parameters. Returned values will be serialised to as the invocation response.
+This package exposes a public function (`OpenWhiskAction` ) that should be called with a function reference (`([String: Any]) -> [String: Any])`) as a named parameter (`main`). The callback will be executed with the invocation parameters. Returned values will be serialised as the invocation response.
 
 ```swift
 import OpenWhiskAction
