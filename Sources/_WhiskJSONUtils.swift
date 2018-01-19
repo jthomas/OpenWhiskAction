@@ -24,6 +24,13 @@ enum WhiskJsonType {
 }
 
 class WhiskJsonUtils {
+    
+    class func logError(_ string: String) {
+        print(string)
+        #if os(Linux)
+            fputs(string, stderr)
+        #endif
+    }
 
     class func getJsonType(jsonData: Data) -> WhiskJsonType {
         do {
@@ -36,7 +43,7 @@ class WhiskJsonUtils {
                 return .Undefined
             }
         } catch {
-            print("Error converting JSON data to dictionary \(error)")
+            logError("Error converting JSON data to dictionary \(error)")
             return .Undefined
         }
     }
@@ -46,7 +53,7 @@ class WhiskJsonUtils {
             let arr = try JSONSerialization.jsonObject(with: jsonData, options: [])
             return (arr as? [Any])
         } catch {
-            print("Error converting JSON data to dictionary \(error)")
+            logError("Error converting JSON data to dictionary \(error)")
             return nil
         }
     }
@@ -56,7 +63,7 @@ class WhiskJsonUtils {
             let dic = try JSONSerialization.jsonObject(with: jsonData, options: [])
             return dic as? [String:Any]
         } catch {
-            print("Error converting JSON data to dictionary \(error)")
+            logError("Error converting JSON data to dictionary \(error)")
             return nil
         }
     }
@@ -70,13 +77,13 @@ class WhiskJsonUtils {
                 if let jsonStr = String(data: jsonData, encoding: String.Encoding.utf8) {
                     return jsonStr
                 } else {
-                    print("Error serializing data to JSON, data conversion returns nil string")
+                    logError("Error serializing data to JSON, data conversion returns nil string")
                 }
             } catch {
-                print(("\(error)"))
+                logError(("Exception serializing data to JSON: \(error)"))
             }
         } else {
-            print("Error serializing JSON, data does not appear to be valid JSON")
+            logError("Error serializing JSON, data does not appear to be valid JSON")
         }
         return nil
     }
@@ -88,7 +95,7 @@ class WhiskJsonUtils {
             let data: Data = try json.rawData()
             return data
         } catch {
-            print("Cannot convert Dictionary to Data")
+            logError("Cannot convert Dictionary to Data")
             return nil
         }
     }
@@ -111,7 +118,7 @@ class WhiskJsonUtils {
             let data: Data = try json.rawData()
             return data
         } catch {
-            print("Cannot convert Array to Data")
+            logError("Cannot convert Array to Data")
             return nil
         }
     }
