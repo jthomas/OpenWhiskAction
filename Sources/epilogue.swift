@@ -30,11 +30,7 @@ import Foundation
 
 func _whisk_json2dict(txt: String) -> [String:Any]? {
     if let data = txt.data(using: String.Encoding.utf8, allowLossyConversion: true) {
-        do {
-            return WhiskJsonUtils.jsonDataToDictionary(jsonData: data)
-        } catch {
-            return nil
-        }
+        return WhiskJsonUtils.jsonDataToDictionary(jsonData: data)
     }
     return nil
 }
@@ -47,32 +43,12 @@ func _run_main(mainFunction: ([String: Any]) -> [String: Any]) -> Void {
     if let parsed = _whisk_json2dict(txt: inputStr) {
         let result = mainFunction(parsed)
         
-        if result is [String:Any] {
-            do {
-                if let respString = WhiskJsonUtils.dictionaryToJsonString(jsonDict: result) {
-                    print("\(respString)")
-                } else {
-                    print("Error converting \(result) to JSON string")
-                    #if os(Linux)
-                        fputs("Error converting \(result) to JSON string", stderr)
-                    #endif
-                }
-            } catch {
-                print("Error serializing response \(error)")
-                #if os(Linux)
-                    fputs("Error serializing response \(error)", stderr)
-                #endif
-            }
+        if let respString = WhiskJsonUtils.dictionaryToJsonString(jsonDict: result) {
+            print("\(respString)")
         } else {
-            print("Cannot serialize response: \(result)")
-            #if os(Linux)
-                fputs("Cannot serialize response: \(result)", stderr)
-            #endif
+            WhiskJsonUtils.logError("Error converting \(result) to JSON string")
         }
     } else {
-        print("Error: couldn't parse JSON input.")
-        #if os(Linux)
-            fputs("Error: couldn't parse JSON input.", stderr)
-        #endif
+        WhiskJsonUtils.logError("Error: couldn't parse JSON input.")
     }
 }
